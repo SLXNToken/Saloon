@@ -1,0 +1,10 @@
+node_modules/
+test/
+testhelp.txt
+*.png
+*.svg
+*.woff2
+*.woff
+*.ttf
+*.eot
+*.jpeg
