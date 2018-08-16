@@ -9,3 +9,4 @@ testhelp.txt
 *.eot
 *.jpeg
 build/
+build/contracts
