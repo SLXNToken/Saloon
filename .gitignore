@@ -8,3 +8,4 @@ testhelp.txt
 *.ttf
 *.eot
 *.jpeg
+build/
