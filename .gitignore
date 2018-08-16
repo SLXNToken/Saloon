@@ -1,5 +1,7 @@
 node_modules/
 test/
+build/
+build/contracts
 testhelp.txt
 *.png
 *.svg
@@ -8,5 +10,3 @@ testhelp.txt
 *.ttf
 *.eot
 *.jpeg
-build/
-build/contracts
