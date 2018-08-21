@@ -57,7 +57,7 @@ contract Saloon {
   		matches[usersGame[msg.sender]].vote[msg.sender] = _for;
   	}
   	function evaluateMatchState (uint _id) private view returns (bool _ok){
-  		for (uint i = 0; i < matches[_id].numAccounts; i++){
+  		for (uint i = 0; i < matches[_id].numAccounts; i++){ // all connected accounts must have voted for someone
   			if (matches[_id].vote[matches[_id].accounts[i]]==0) return false;
   		}
   		return true;
@@ -69,7 +69,7 @@ contract Saloon {
 
   	function createMatch (uint _mode, uint _stake) public {
   		// User must have stake
-  		require(modes[_mode].id != 0); // Mode must exist
+  		require(modes[_mode].id != 0, "_mode must exist");
   		require(_stake >= modes[_mode].minStake && _stake <= modes[_mode].maxStake); // stake must be stakeween minStake and maxStake
   		require(!userInGame[msg.sender]); // user can not already be in a game
 
