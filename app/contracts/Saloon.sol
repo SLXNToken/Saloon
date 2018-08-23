@@ -39,8 +39,8 @@ contract Saloon {
   		matchCount ++;
   		matches[matchCount] = Match(matchCount, _mode, _stake, _founder, 0);
 
-		// Place the user in the Match's account mapping
-		placeUserInMatch(matchCount, _founder);
+  		// Place the user in the Match's account mapping
+  		placeUserInMatch(matchCount, _founder);
   	}
   	function placeUserInMatch (uint _id, address _address) private {
 
@@ -67,23 +67,23 @@ contract Saloon {
 	mapping(address => bool) public userInGame;
 	mapping(address => uint) public usersGame;
 
-  	function createMatch (uint _mode, uint _stake) public {
-  		// User must have stake
-  		require(modes[_mode].id != 0, "_mode must exist");
-  		require(_stake >= modes[_mode].minStake && _stake <= modes[_mode].maxStake); // stake must be stakeween minStake and maxStake
-  		require(!userInGame[msg.sender]); // user can not already be in a game
+  function createMatch (uint _mode, uint _stake) public {
+  	// User must have stake
+  	require(modes[_mode].id != 0, "_mode must exist");
+  	require(_stake >= modes[_mode].minStake && _stake <= modes[_mode].maxStake); // stake must be stakeween minStake and maxStake
+  	require(!userInGame[msg.sender]); // user can not already be in a game
 
-  		// Create the Match
-  		addMatch(_mode, _stake, msg.sender);
-  	}
-  	function joinMatch (uint _id) public{
-  		// User must have stake
- 		require(!userInGame[msg.sender]); // user can not already be in a match
+  	// Create the Match
+  	addMatch(_mode, _stake, msg.sender);
+  }
+  function joinMatch (uint _id) public{
+  	// User must have stake
+ 	  require(!userInGame[msg.sender]); // user can not already be in a match
  		require(matches[_id].id!=0); // match must exist
-  		require(modes[matches[_id].mode].usersNeeded > matches[_id].numAccounts); // Match must not be full match
+  	require(modes[matches[_id].mode].usersNeeded > matches[_id].numAccounts); // Match must not be full match
 
-  		placeUserInMatch(_id, msg.sender); // Place the user in the Match's account mapping
-  	}
+  	placeUserInMatch(_id, msg.sender); // Place the user in the Match's account mapping
+  }
   	function castMatchVote (address _for) public {
   		require(userInGame[msg.sender]); // User must be in a match
   		require(matches[usersGame[msg.sender]].id!=0); // match the user is in must exist
