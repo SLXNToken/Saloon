@@ -2,11 +2,11 @@ pragma solidity ^0.4.24;
 
 contract Saloon {
 
-	/*/ Initialize Contract */
+  /*/ Initialize Contract */
 	constructor() public {
-		addMode('1v1', 1, 100, 2);
-		addMode('2v2', 1, 100, 4);
-  	}
+		addMode('Fortnite 1v1', 1, 100, 2);
+		addMode('Fortnite 1v1v1v1', 1, 100, 4);
+  }
 
 	/* Modes */
 	struct Mode {
@@ -18,50 +18,54 @@ contract Saloon {
 	}
 	mapping(uint => Mode) public modes; uint public modeCount;
 
-  	function addMode (string _name, uint _minStake, uint _maxStake, uint _maxPlayers) private {
-  		modeCount ++;
-  		modes[modeCount] = Mode(modeCount, _name, _minStake, _maxStake,_maxPlayers);
-  	}
+  function addMode (string _name, uint _minStake, uint _maxStake, uint _maxPlayers) private {
+  	modeCount ++;
+  	modes[modeCount] = Mode(modeCount, _name, _minStake, _maxStake,_maxPlayers);
+  }
 
-  	/* Matches */
-  	struct Match {
-  		uint id;
-  		uint mode;
-  		uint stake;
-  		address founder;
-  		mapping(address => address) vote;
-  		mapping(uint => address) accounts; uint numAccounts;
-  	}
+  /* Matches */
+  struct Match {
+  	uint id;
+  	uint mode;
+  	uint stake;
+  	address founder;
+  	mapping(address => address) vote;
+  	mapping(uint => address) accounts; uint numAccounts;
+  }
 	mapping(uint => Match) public matches; uint public matchCount;
-  	function addMatch (uint _mode, uint _stake, address _founder) private {
+  event addedMatchEvent ( uint indexed matchId );
+	function addMatch (uint _mode, uint _stake, address _founder) private {
 
-  		// Add the match to the mapping
-  		matchCount ++;
-  		matches[matchCount] = Match(matchCount, _mode, _stake, _founder, 0);
+		// Add the match to the mapping
+		matchCount ++;
+		matches[matchCount] = Match(matchCount, _mode, _stake, _founder, 0);
 
-  		// Place the user in the Match's account mapping
-  		placeUserInMatch(matchCount, _founder);
-  	}
-  	function placeUserInMatch (uint _id, address _address) private {
+		// Place the user in the Match's account mapping
+		placeUserInMatch(matchCount, _founder);
+    // Trigger event
+    addedMatchEvent(matchCount);
+	}
+	function placeUserInMatch (uint _id, address _address) private {
 
-  		// Place the user in the Match !merge-!refactor-these
-  		userInGame[_address] = true;
-  		usersGame[_address] = matchCount;
+		// Place the user in the Match !merge-!refactor-these
+		userInGame[_address] = true;
+		usersGame[_address] = matchCount;
 
-  		// Place the user in the Match's account mapping
-  		matches[_id].numAccounts ++;
-  		matches[_id].accounts[matches[_id].numAccounts] = _address;
-  	}
-  	function addVote (address _for) private{
-  		// Add the vote to the vote mapping of the match
-  		matches[usersGame[msg.sender]].vote[msg.sender] = _for;
-  	}
-  	function evaluateMatchState (uint _id) private view returns (bool _ok){
-  		for (uint i = 0; i < matches[_id].numAccounts; i++){ // all connected accounts must have voted for someone
-  			if (matches[_id].vote[matches[_id].accounts[i]]==0) return false;
-  		}
-  		return true;
-  	}
+		// Place the user in the Match's account mapping
+		matches[_id].numAccounts ++;
+		matches[_id].accounts[matches[_id].numAccounts] = _address;
+
+	}
+	function addVote (address _for) private{
+		// Add the vote to the vote mapping of the match
+		matches[usersGame[msg.sender]].vote[msg.sender] = _for;
+	}
+	function evaluateMatchState (uint _id) private view returns (bool _ok){
+		for (uint i = 0; i < matches[_id].numAccounts; i++){ // all connected accounts must have voted for someone
+			if (matches[_id].vote[matches[_id].accounts[i]]==0) return false;
+		}
+		return true;
+	}
 
   	/* Users -> Matches */
 	mapping(address => bool) public userInGame;

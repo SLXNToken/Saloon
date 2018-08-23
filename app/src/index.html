@@ -4,51 +4,109 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Saloon Results</title>
+    <title>SLXN | Dashboard</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.4/holder.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Slab" rel="stylesheet">
+<style type="text/css">
+      body {
+        margin:0;padding:0;
+        font-family: 'Roboto Slab', serif;
+        background: rgba(249,170,51,.08);
+      }
+      .rply-dark {
+        background:#232F34;
+      }
+      .rply-orange {
+        background: rgb(249,170,51) !important;
+        color:#232F34 !important;
+      }
+      .rply-txt-orange {
+        color: rgb(249,170,51) !important;
+      }
+      .rply-blue {
+        background: #344955 !important;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
   </head>
+
   <body>
-    <div class="container" style="width: 650px;">
-      <form onSubmit="App.createMatch(); return false;">
-        <div class="form-group">
-          <label for="candidatesSelect">Select Candidate</label>
-          <select class="form-control" id="candidatesSelect">
-          </select>
+    <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark rply-blue">
+
+        <a class="navbar-brand rply-txt-orange" href="#">SLXN<small class="text-light">.games</small></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link active text-center" href="#">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-center" href="#">F.A.Q.</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link rply-orange text-center" href="#">My Account</a>
+            </li>
+          </ul>
         </div>
-        <button type="submit" class="btn btn-primary">Vote</button>
-        <hr />
-      </form>
-      <div class="row">
-        <div class="col-lg-12">
-          <h1 class="text-center">Saloon Results</h1>
-          <hr/>
-          <br/>
-          <div id="loader">
-            <p class="text-center">Loading...</p>
-          </div>
-          <div id="content" style="display: none;">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">minStake</th>
-                  <th scope="col">maxStake</th>
-                  <th scope="col">requiredUsers</th>
-                </tr>
-              </thead>
-              <tbody id="candidatesResults">
-              </tbody>
-            </table>
-            <hr/>
+
+      </nav>
+      </header>
+      <div class="p-3">
+      <section id="ingame_screen" class="jumbotron text-center rply-orange p-2" style="display: none;">
+        <div class="container">
+          <h4 class="jumbotron-heading">You're in a Session.</h4>
+          <p>
+            Your playing against 'asdasdasdas'
+            <br>
+            <span id="voting">
+            <a href="#" class="btn btn-primary my-2" onclick="App.voteThread(1);">Report Win.</a>
+            <a href="#" class="btn btn-secondary my-2" onclick="App.voteThread(0);">Report Loss.</a>
+          </span>
+          </p>
+        </div>
+      </section>
+    </div>
+
+      <div class="album py-5 bg-light">
+        <div class="container-fluid">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item btn btn-sm"><a href="#">Dashboard</a></li>
+              <li class="breadcrumb-item btn-sm"><a href="#">Saloons</a></li>
+              <li class="breadcrumb-item active btn-sm" aria-current="page">Fortnite</li>
+              <li style="float: right;" class="ml-auto"><button class="btn btn-sm rply-orange">Create Session</button></li>
+
+            </ol>
+          </nav>
+          <table class="table table-hover table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Mode</th>
+      <th scope="col">Bet</th>
+      <th scope="col">Region</th>
+      <th scope="col" class="text-right"><h6 class="fa fa-sync"></h6></th>
+    </tr>
+  </thead>
+  <tbody id="dataBody"></tbody>
+</table>
+    </main>
             <p id="accountAddress" class="text-center"></p>
           </div>
         </div>
       </div>
-    </div>
-
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->

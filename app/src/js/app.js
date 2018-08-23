@@ -4,6 +4,7 @@ App = {
   account: '0x0',
 
   init: function() {
+
     return App.initWeb3();
   },
 
@@ -27,13 +28,55 @@ App = {
       // Connect provider to interact with contract
       App.contracts.Saloon.setProvider(App.web3Provider);
 
+      App.listenForEvents();
+
       return App.render();
     });
   },
-  createMatch: function() {
-    var candidateId = $('#candidatesSelect').val();
+  listenForEvents: function() {
     App.contracts.Saloon.deployed().then(function(instance) {
-      return instance.createMatch(1,10, { from: App.account });
+      instance.addedMatchEvent({}, {
+        fromBlock: 0,
+        toBlock: 'latest'
+      }).watch(function(error, event) {App.render();});
+    });
+  },
+  voteThread: function(_won){
+    var _for = App.account;
+    if (_won != 1){
+      _for = 0;
+    }
+    console.log(_for);
+    App.contracts.Saloon.deployed().then(function(instance) {
+      return instance.castMatchVote(_for, { from: App.account });
+    }).then(function(result) {
+      console.log(result)
+      // Wait for votes to update
+      $("#content").hide();
+      $("#loader").show();
+    }).catch(function(err) {
+      console.error(err);
+    });
+  },
+  joinThread: function(_threadID) {
+    App.contracts.Saloon.deployed().then(function(instance) {
+      return instance.joinMatch(_threadID, { from: App.account });
+    }).then(function(result) {
+      // Wait for votes to update
+      $("#content").hide();
+      $("#loader").show();
+    }).catch(function(err) {
+      console.error(err);
+    });
+  },
+  createThread: function(e, mode) {
+    let staking = e;
+    //let staking = e.parentElement.querySelector('input').value;
+    this.createMatch(mode, staking);
+  },
+  createMatch: function(_mode, _stake) {
+    App.contracts.Saloon.deployed().then(function(instance) {
+      return instance.createMatch(_mode, _stake, { from: App.account });
     }).then(function(result) {
       // Wait for votes to update
       $("#content").hide();
@@ -61,27 +104,24 @@ App = {
     // Load contract data
     App.contracts.Saloon.deployed().then(function(instance) {
       SaloonInstance = instance;
-      return SaloonInstance.modeCount();
-    }).then(function(modeCount) {
-      var candidatesResults = $("#candidatesResults");
+      return SaloonInstance.matchCount();
+    }).then(function(matchCount) {
+      var candidatesResults = $("#dataBody");
       candidatesResults.empty();
-    var candidatesSelect = $('#candidatesSelect');
-    candidatesSelect.empty();
-      for (var i = 1; i <= modeCount; i++) {
-        SaloonInstance.modes(i).then(function(candidate) {
+      for (var i = 1; i <= matchCount; i++) {
+        SaloonInstance.matches(i).then(function(match) {
+          SaloonInstance.modes(match[1]).then(function(mode) {
+            var id = match[0];
+            var name = mode[1];
+            var stake = match[2];
 
-        var id = candidate[0];
-        var name = candidate[1];
-        var minStake = candidate[2];
-        var maxStake = candidate[3];
-        var usersNeeded = candidate[4];
-
-          // Render candidate Result
-          var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + minStake + "</td><td>" + maxStake + "</td><td>" + usersNeeded + "</td></tr>"
-          candidatesResults.append(candidateTemplate);
-                  // Render candidate ballot option
-        var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
-        candidatesSelect.append(candidateOption);
+            var numAccounts = match[4];
+            var usersNeeded = mode[4]; 
+            if (numAccounts < usersNeeded){ // Lobby must not render if full
+              var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + stake + " ETH </td><td>" + '' + "</td><td style='width: 10%;'><button class='btn btn-secondary w-100' onclick='App.joinThread("+id+");'>Join</button></td></tr>"
+              candidatesResults.append(candidateTemplate);
+            }
+          });
         });
       }
 
@@ -90,10 +130,10 @@ App = {
       return SaloonInstance.userInGame(App.account);
 
     }).then(function(inGame) {
-      // Do not allow a user to vote
-      if(inGame) {
-        $('form').hide();
-      }
+    if(inGame) {
+      $('#ingame_screen').slideDown();
+      // add oppenents to vote for
+    }
     loader.hide();
     content.show();
   }).catch(function(error) {
