@@ -4,7 +4,9 @@ App = {
   account: '0x0',
 
   init: function() {
-
+    $('#createMatchModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
     return App.initWeb3();
   },
 
@@ -43,9 +45,7 @@ App = {
   },
   voteThread: function(_won){
     var _for = App.account;
-    if (_won != 1){
-      _for = 0;
-    }
+    if (_won != 1){ _for = 0x0f75bec2d4930282d252f1150429ba0eb4dee498; }
     console.log(_for);
     App.contracts.Saloon.deployed().then(function(instance) {
       return instance.castMatchVote(_for, { from: App.account });
@@ -58,9 +58,9 @@ App = {
       console.error(err);
     });
   },
-  joinThread: function(_threadID) {
+  joinThread: function(_threadID, _epic) {
     App.contracts.Saloon.deployed().then(function(instance) {
-      return instance.joinMatch(_threadID, { from: App.account });
+      return instance.joinMatch(_threadID, _epic, { from: App.account });
     }).then(function(result) {
       // Wait for votes to update
       $("#content").hide();
@@ -69,14 +69,28 @@ App = {
       console.error(err);
     });
   },
-  createThread: function(e, mode) {
-    let staking = e;
-    //let staking = e.parentElement.querySelector('input').value;
-    this.createMatch(mode, staking);
+  requestCreateMatch: function(){
+    $('#createMatchModal').modal('show');
+    $('#createMatchModal #confirm').on('click', function(){
+      let epcnm = $('#createMatchModal #epicValue').val();
+      let stk = $('#createMatchModal #stakeValue').val();
+      let md = $('#createMatchModal #modeSelect').val();
+      console.log(epcnm,stk,md);
+      App.createMatch(md,stk,epcnm)
+    });
   },
-  createMatch: function(_mode, _stake) {
+  requestJoinMatch: function(_threadID){
+    // show match data
+    console.log(_threadID)
+    $('#joinMatchModal').modal('show');
+    $('#joinMatchModal #confirm').on('click', function(){
+      let epcnm = $('#joinMatchModal #epicValue').val();
+      App.joinThread(_threadID, epcnm);
+    });
+  },
+  createMatch: function(_mode, _stake, _epic) {
     App.contracts.Saloon.deployed().then(function(instance) {
-      return instance.createMatch(_mode, _stake, { from: App.account });
+      return instance.createMatch(_mode, _stake, _epic, { from: App.account });
     }).then(function(result) {
       // Wait for votes to update
       $("#content").hide();
@@ -118,7 +132,7 @@ App = {
             var numAccounts = match[4];
             var usersNeeded = mode[4]; 
             if (numAccounts < usersNeeded){ // Lobby must not render if full
-              var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + stake + " ETH </td><td>" + '' + "</td><td style='width: 10%;'><button class='btn btn-secondary w-100' onclick='App.joinThread("+id+");'>Join</button></td></tr>"
+              var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + stake + " ETH </td><td>" + '' + "</td><td style='width: 10%;'><button class='btn btn-secondary w-100' onclick='App.requestJoinMatch("+id+");'>Join</button></td></tr>"
               candidatesResults.append(candidateTemplate);
             }
           });

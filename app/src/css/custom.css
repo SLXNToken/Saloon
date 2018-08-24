@@ -9,6 +9,7 @@
 }
 .bg-theme-accent {
   background: #F9AA33 !important; 
+  color:#232F34 !important;
 }
 .bg-text-blue {
   color: #344955 !important; 
@@ -24,6 +25,11 @@
 }
 
 
+      body {
+        margin:0;padding:0;
+        font-family: 'Roboto Slab', serif;
+        background: rgba(249,170,51,.08);
+      }
 :root {
   --jumbotron-padding-y: 3rem;
 }
@@ -63,8 +69,3 @@ footer p {
 }
 
 .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
-.tooltip {
-    position: fixed;
-    z-index: 100000;
-    color: black;
-}
