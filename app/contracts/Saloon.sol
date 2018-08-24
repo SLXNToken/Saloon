@@ -63,7 +63,7 @@ contract Saloon {
 		matches[usersGame[msg.sender]].vote[msg.sender] = _for;
 
     if (everyoneVoted(matches[usersGame[msg.sender]].id) == true){
-      
+
     }
 	}
 	function everyoneVoted (uint _id) private view returns (bool _allVotesAreIn){
@@ -73,11 +73,14 @@ contract Saloon {
     return true; // noone hasn't voted
 	}
   function evaluateThread (uint _id) private {
+
+  // CREATE VARIABLES
     // for all accounts in a thread mapping(account => uint) votes;
       // get vote for each account
       // require vote is for account in thread mapping, else, don't count it 
       // increment votes[vote] by one
 
+  // PUT VARIABLES UNDER CONDITIONS
     // create an empty winner address winner;
     // for all accounts in a thread mapping's votes
       // if (account's votes > 0) 
@@ -86,6 +89,8 @@ contract Saloon {
         // else 
           // if (account's votes > 0) dispute = true;
       //
+
+  // MANAGE OUTCOME
     // if (dispute is true)
       // createDispute();
     // else
