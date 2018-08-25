@@ -3,10 +3,5 @@ test/
 build/
 build/contracts
 testhelp.txt
-*.png
-*.svg
-*.woff2
-*.woff
-*.ttf
-*.eot
-*.jpeg
+images/
+fonts/
