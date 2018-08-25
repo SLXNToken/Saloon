@@ -81,16 +81,18 @@ contract Saloon {
       delete userInGame[matches[_id].accounts[i+1]];
       delete usersGame[matches[_id].accounts[i+1]];
     }
-
+  }
+  function disputeMatch (uint _id) private {
+    // create a dispute 
+    // find accounts with votes
+    // populate dispute with accounts
   }
 
   /* Users -> Matches */
   mapping(address => string) private usersEpic;
-
-
+  mapping(address => uint) private usersGame;
 
   mapping(address => bool) public userInGame;
-  mapping(address => uint) private usersGame;
   mapping(address => uint) public usersWins;
 
   function createMatch (uint _mode, uint _stake, string _epic) public {
@@ -112,12 +114,13 @@ contract Saloon {
   function castMatchVote (uint accountID) public{
     address sender = msg.sender;
     uint matchID = usersGame[sender];
-    address voteFor = matches[matchID].accounts[accountID];
 
     require(userInGame[sender]); // user must be in a match
     require(modes[matches[matchID].mode].usersNeeded == matches[matchID].numAccounts); // must be full lobby
     require(matches[matchID].hasVoted[sender] == false); // user must not have voted
     require(accountID <= matches[matchID].numAccounts && accountID > 0); // vote must be for player in match
+
+    address voteFor = matches[matchID].accounts[accountID];
 
     matches[matchID].voteCount[voteFor] ++;
     matches[matchID].hasVoted[sender] = true;
@@ -149,7 +152,7 @@ contract Saloon {
         endMatch(matchID, undisputedWinner);
       }
       else {
-        // handle dispute contract
+        disputeMatch(matchID);
       }
     }
   }
