@@ -2,4 +2,4 @@
 
 ..
 
-![Screenshot](https://raw.githubusercontent.com/be9concepts/SLXN/app/public/screenshot.PNG);
+![Screenshot](https://raw.githubusercontent.com/be9concepts/SLXN/public/screenshot.PNG);
