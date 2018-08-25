@@ -16,11 +16,30 @@ contract Saloon {
 		uint maxStake;
 		uint usersNeeded;
 	}
+
 	mapping(uint => Mode) public modes; uint public modeCount;
 
   function addMode (string _name, uint _minStake, uint _maxStake, uint _maxPlayers) private {
   	modeCount ++;
   	modes[modeCount] = Mode(modeCount, _name, _minStake, _maxStake,_maxPlayers);
+  }
+
+  /* Matches */
+  struct Issue {
+    uint id;
+    uint assoc_match;
+  }
+  mapping(uint => Issue) public issues; uint public numIssues;
+
+  event addedIssueEvent ( uint indexed issueID );
+  function addIssue (uint _id) private {
+
+    // Add the match to the mapping
+    numIssues ++;
+    issues[numIssues] = Issue(numIssues, _id);
+
+    // Trigger event
+    emit addedIssueEvent(numIssues);
   }
 
   /* Matches */
@@ -67,12 +86,11 @@ contract Saloon {
 		// Place the user in the Match !merge-!refactor-these
 		userInGame[_address] = true;
 		usersGame[_address] = matchCount;
-    // Place the user in the Match !merge-!refactor-these
-    usersEpic[_address] = _epic;
 
 		// Place the user in the Match's account mapping
 		matches[_id].numAccounts ++;
-		matches[_id].accounts[matches[_id].numAccounts] = _address;
+    matches[_id].accounts[matches[_id].numAccounts] = _address;
+    matches[_id].epic[_address] = _epic;
 	}
 
   function endMatch (uint _id, address _winner) private {
@@ -84,14 +102,12 @@ contract Saloon {
   }
   function disputeMatch (uint _id) private {
     // create a dispute 
-    // find accounts with votes
-    // populate dispute with accounts
+
+    addIssue(_id);
   }
 
   /* Users -> Matches */
-  mapping(address => string) private usersEpic;
   mapping(address => uint) private usersGame;
-
   mapping(address => bool) public userInGame;
   mapping(address => uint) public usersWins;
 
