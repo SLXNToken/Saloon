@@ -110,7 +110,7 @@ App = {
       console.error(err);
     });
   },
-  sendIssueVote: function(_issueID, _for){
+  sendIssueVote: function(_issueID, _forAccount){
     App.contracts.Saloon.deployed().then(function(instance) {
       return instance.castIssueVote(_issueID, _forAccount, { from: App.account });
     }).catch(function(err) {
@@ -221,7 +221,7 @@ App = {
       disputeDataElement.empty();
       for (var i = 1; i <= matchCount; i++) {
         SaloonInstance.matches(i).then(function(match) {
-          SaloonInstance.modes(match[1]).then(function(mode) {
+          SaloonInstance.modes(match[match[0]]).then(function(mode) {
             var id = match[0];
             var name = mode[1];
             var stake = match[2];
@@ -229,6 +229,8 @@ App = {
             var usersNeeded = mode[4]; 
             var dis = match[4]; 
             if (dis == 1){
+              // sender must not have already voted for this issue
+              // issue must be open, issue.numVotes > issue.match.mode.votesNeeded
               var candidateTemplate = "<tr><th class='text-center'>" + id + "</th><td>" + name + "</td><td style='width: 10%;'><button class='btn btn-secondary w-100' onclick='App.requestVoteIssue("+id+");'>Vote</button></td></tr>"
               disputeDataElement.append(candidateTemplate);
             }
