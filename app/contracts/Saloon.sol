@@ -4,8 +4,8 @@ contract Saloon {
 
   /*/ Initialize Contract */
 	constructor() public {
-		addMode('Fortnite 1v1', 1, 100, 2);
-		addMode('Fortnite 1v1v1v1', 1, 100, 4);
+		addMode('Fortnite 1v1', 1, 100, 2, (2*3)-1);
+		addMode('Fortnite 1v1v1v1', 1, 100, 4, (4*3)-1);
   }
 
 	/* Modes */
@@ -15,18 +15,23 @@ contract Saloon {
 		uint minStake;
 		uint maxStake;
 		uint usersNeeded;
+    uint votesNeeded;
 	}
 
 	mapping(uint => Mode) public modes; uint public modeCount;
 
-  function addMode (string _name, uint _minStake, uint _maxStake, uint _maxPlayers) private {
-  	modeCount ++;
-  	modes[modeCount] = Mode(modeCount, _name, _minStake, _maxStake,_maxPlayers);
+  function addMode (string _name, uint _minStake, uint _maxStake, uint _maxPlayers, uint _votesToSettleIssue) private {
+  	require(_votesToSettleIssue % 2 != 0);
+    modeCount ++;
+  	modes[modeCount] = Mode(modeCount, _name, _minStake, _maxStake,_maxPlayers,_votesToSettleIssue);
   }
 
   /* Matches */
   struct Issue {
     uint id;
+    mapping(address => uint) voteCount; uint numVotes;
+    mapping(address => bool) hasVoted;
+    uint assoc_match;
   }
   mapping(uint => Issue) public issues; uint public numIssues;
 
@@ -35,11 +40,32 @@ contract Saloon {
 
     // Add the match to the mapping
     numIssues ++;
-    issues[numIssues] = Issue(numIssues);
+    issues[numIssues] = Issue(numIssues, 0, _id);
     matches[_id].assoc_issue = numIssues;
 
     // Trigger event
     emit addedIssueEvent(numIssues);
+  }
+
+  function addVoteToIssue (uint _issueID, address _forAccount, address _fromAccount) private{
+    issues[_issueID].voteCount[_forAccount] ++;
+    issues[_issueID].numVotes ++;
+    issues[_issueID].hasVoted[_fromAccount] = true;
+
+    // check for final vote
+    // if final vote
+    if (issues[_issueID].numVotes == modes[matches[issues[_issueID].assoc_match].mode].votesNeeded){
+      address liked;
+      for (uint j = 0; j < matches[issues[_issueID].assoc_match].numAccounts; j++){ // loop through accounts in match
+        uint votesForThisACC = issues[_issueID].voteCount[matches[issues[_issueID].assoc_match].accounts[j]];// get issue.votes[account]
+        uint votesForLikedACC = issues[_issueID].voteCount[liked];
+        if (votesForThisACC > votesForLikedACC){
+          liked = matches[issues[_issueID].assoc_match].accounts[j];
+        }
+      }
+      endMatch(issues[_issueID].assoc_match, liked);
+
+    }
   }
 
   /* Matches */
@@ -131,6 +157,15 @@ contract Saloon {
 
   	placeUserInMatch(_id, msg.sender, _epic);
   }
+
+  function castIssueVote (uint _issueID, address _forAccount) public {
+    // sender must meet requirements to vote
+    require(matches[issues[_issueID].assoc_match].voteCount[_forAccount] > 0); // vote must be for account in match
+    require(issues[_issueID].numVotes < modes[matches[issues[_issueID].assoc_match].mode].votesNeeded); // issue must be open, issue.numVotes > issue.match.mode.votesNeeded
+    require(issues[_issueID].hasVoted[msg.sender] != true); // sender must not have already voted for this issue
+    addVoteToIssue(_issueID, _forAccount, msg.sender);
+  }
+
   function castMatchVote (uint accountID) public{
     address sender = msg.sender;
     uint matchID = usersGame[sender];

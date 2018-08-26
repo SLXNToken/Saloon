@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SLXN | Dashboard</title>
+    <title>SLXN | F.A.Q.</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <!-- Google Fonts -->
@@ -26,13 +26,13 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link active text-center" href="/">Dashboard</a>
+              <a class="nav-link text-center" href="/">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-center" href="/disputes.html">Disputes</a>
+              <a class="nav-link text-center" href="disputes.html">Disputes</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-center" href="/faq.html">F.A.Q.</a>
+              <a class="nav-link active text-center" href="faq.html">F.A.Q.</a>
             </li>
             <li class="nav-item">
               <a class="nav-link text-center" href="#"><i class="fa fa-user bg-theme-accent p-1 rounded"></i></a>
@@ -41,52 +41,20 @@
         </div>
       </nav>
     </header>
-    <div class="p-3">
-      <section id="ingame_screen" class="jumbotron text-center  p-2" style="display: none;">
-        <div class="container">
-          <h4 class="jumbotron-heading">You're in a Session.</h4>
-          <div id="wait_for_players" class="alert alert-primary" style="display: none;">
-            waiting for players to join
-          </div>
-          <div id="wait_for_votes" class="alert alert-warning" style="display: none;">
-            waiting for all players to vote
-          </div>
-          <div class="alert alert-danger" id="wait_for_dispute" style="display: none;">
-            Uh oh. It looks like your match has ended in a dispute. The application is gathering votes from the community to resolve your session. Hang tight...<hr>Lear more about how disputes are resolved <a href="here">here</a>.
-          </div>
-          <p id="select_who_won" style="display: none;">
-            Select who won.
-            <br>
-            <span id="voting">
-              <a href="#" class="btn btn-primary my-2" onclick="App.voteThread(1);">Report Win.</a>
-              <a href="#" class="btn btn-secondary my-2" onclick="App.voteThread(0);">Report Loss.</a>
-            </span>
-          </p>
-        </div>
-      </section>
-    </div>
-    <div class="album py-5 bg-light" id="thread_finder" style="display: none;">
+    <div class="album py-5 bg-light" id="dispute_finder">
       <div class="container-fluid">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item btn btn-sm"><a href="#">Dashboard</a></li>
-            <li class="breadcrumb-item btn-sm"><a href="#">Saloons</a></li>
-            <li class="breadcrumb-item active btn-sm" aria-current="page">Fortnite</li>
-            <li style="float: right;" class="ml-auto"><button class="btn btn-sm bg-theme-accent" onclick="App.requestCreateMatch();">Create Session</button></li>
-          </ol>
-        </nav>
-        <table class="table table-hover table-dark">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Mode</th>
-              <th scope="col">Bet</th>
-              <th scope="col">Region</th>
-              <th scope="col" class="text-right"><h6 class="fa fa-sync"></h6></th>
-            </tr>
-          </thead>
-          <tbody id="dataBody"></tbody>
-        </table>
+        <div class="jumbotron jumbotron-fluid text-center">
+          <h3>Frequently Asked Questions</h3>
+          <h4 class="lead">component for calling extra attention to featured content or <a href="">DelegateCall</a>.</h4>
+          
+        </div>
+
+          <hr class="my-4">
+          <div class="alert alert-secondary">
+            <p class="lead text-center">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+            <hr>
+            <p class="text-center">It uses utility classes for typography and spacing to space content out within the larger container.</p>
+          </div>
         </div>
       </div>
     </div>

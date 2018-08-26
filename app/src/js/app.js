@@ -124,6 +124,7 @@ App = {
             else {
                 let isDisputed = usersMatch[4].valueOf();
                 if (isDisputed == 1) {
+                  $('#wait_for_dispute').slideDown();
 
                 }
                 else {
@@ -148,6 +149,26 @@ App = {
   loadThreads: function(matchCount) {
     console.log('loading threads')
   },
+  loadDisputes: function(){
+    console.log('loading disputes');
+    // Load disputes
+    App.contracts.Saloon.deployed().then(function(instance) {
+      SaloonInstance = instance;
+      return SaloonInstance.numIssues();
+    }).then(function(numDisputes){
+      numDisputes = numDisputes.valueOf();
+      if (numDisputes > 0){
+        console.log('Disputes Found: ', numDisputes);
+        var outputElement = $("#disputeData");
+        outputElement.empty();
+        for (var i = 1; i <= numDisputes; i++) {
+          SaloonInstance.issues(i).then(function(_issue) {
+            console.log(_issue);
+          });
+        }  
+      }
+    });
+  },
   render: function() {
     var SaloonInstance;
 
@@ -159,6 +180,8 @@ App = {
       }
     });
 
+    App.loadDisputes();
+
     // Load contract data
     App.contracts.Saloon.deployed().then(function(instance) {
       SaloonInstance = instance;
@@ -166,6 +189,8 @@ App = {
     }).then(function(matchCount) {
       var candidatesResults = $("#dataBody");
       candidatesResults.empty();
+      var disputeDataElement = $("#disputeData");
+      disputeDataElement.empty();
       for (var i = 1; i <= matchCount; i++) {
         SaloonInstance.matches(i).then(function(match) {
           SaloonInstance.modes(match[1]).then(function(mode) {
@@ -174,13 +199,19 @@ App = {
             var stake = match[2];
             var numAccounts = match[3];
             var usersNeeded = mode[4]; 
-            if (numAccounts < usersNeeded){ // Lobby must not render if full
+            var dis = match[4]; 
+            if (dis == 1){
+              var candidateTemplate = "<tr><th class='text-center'>" + id + "</th><td>" + name + "</td><td style='width: 10%;'><button class='btn btn-secondary w-100' onclick='App.requestVoteIssue("+id+");'>Vote</button></td></tr>"
+              disputeDataElement.append(candidateTemplate);
+            }
+            else if (numAccounts < usersNeeded){ // Lobby must not render if full
               var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + stake + " ETH </td><td>" + '' + "</td><td style='width: 10%;'><button class='btn btn-secondary w-100' onclick='App.requestJoinMatch("+id+");'>Join</button></td></tr>"
               candidatesResults.append(candidateTemplate);
             }
           });
         });
-      }      return SaloonInstance.userInGame(App.account);
+      }      
+      return SaloonInstance.userInGame(App.account);
     }).then(function(inGame) {
       if(inGame) {
         App.handleInGame();
