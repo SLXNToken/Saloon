@@ -27,7 +27,6 @@ contract Saloon {
   /* Matches */
   struct Issue {
     uint id;
-    uint assoc_match;
   }
   mapping(uint => Issue) public issues; uint public numIssues;
 
@@ -36,7 +35,8 @@ contract Saloon {
 
     // Add the match to the mapping
     numIssues ++;
-    issues[numIssues] = Issue(numIssues, _id);
+    issues[numIssues] = Issue(numIssues);
+    matches[_id].assoc_issue = numIssues;
 
     // Trigger event
     emit addedIssueEvent(numIssues);
@@ -48,6 +48,7 @@ contract Saloon {
   	uint mode;
   	uint stake;
     uint numAccounts;
+    uint assoc_issue;
     mapping(uint => address) accounts;
       mapping(address => uint) voteCount;
       mapping(address => bool) hasVoted;
@@ -60,7 +61,7 @@ contract Saloon {
 
 		// Add the match to the mapping
 		matchCount ++;
-		matches[matchCount] = Match(matchCount, _mode, _stake, 0);
+		matches[matchCount] = Match(matchCount, _mode, _stake, 0, 0);
 
 		// Place the user in the Match's account mapping
 		placeUserInMatch(matchCount, _founder, _epic);
@@ -71,6 +72,10 @@ contract Saloon {
   function getAccountByIDinMatch(uint _matchID, uint account) public constant returns(address votes)
   {
      return matches[_matchID].accounts[account];
+  }    
+  function getEpicByIDinMatch(uint _matchID, address account) public constant returns(string votes)
+  {
+     return matches[_matchID].epic[account];
   }  
   function getVotesForAccountInMatch(uint _matchID, address account) public constant returns(uint votes)
   {
@@ -102,12 +107,11 @@ contract Saloon {
   }
   function disputeMatch (uint _id) private {
     // create a dispute 
-
     addIssue(_id);
   }
 
   /* Users -> Matches */
-  mapping(address => uint) private usersGame;
+  mapping(address => uint) public usersGame;
   mapping(address => bool) public userInGame;
   mapping(address => uint) public usersWins;
 
@@ -172,5 +176,4 @@ contract Saloon {
       }
     }
   }
-
 }

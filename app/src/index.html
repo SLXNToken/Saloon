@@ -29,6 +29,9 @@
               <a class="nav-link active text-center" href="#">Dashboard</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link text-center" href="#">Disputes</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link text-center" href="#">F.A.Q.</a>
             </li>
             <li class="nav-item">
@@ -39,11 +42,20 @@
       </nav>
     </header>
     <div class="p-3">
-      <section id="ingame_screen" class="jumbotron text-center bg-theme-accent p-2" style="display: none;">
+      <section id="ingame_screen" class="jumbotron text-center  p-2" style="display: none;">
         <div class="container">
           <h4 class="jumbotron-heading">You're in a Session.</h4>
-          <p>
-            Your playing against 'asdasdasdas'
+          <p id="wait_for_players" style="display: none;">
+            waiting for players to join
+          </p>
+          <p id="wait_for_votes" style="display: none;">
+            waiting for all players to vote
+          </p>
+          <p class="alert alert-danger">
+            Uh oh. It looks like your match has ended in a dispute. The application is gathering votes from the community to resolve your session. Hang tight...<hr>Lear more about how disputes are resolved <a href="here">here</a>.
+          </p>
+          <p id="select_who_won" style="display: none;">
+            Select who won.
             <br>
             <span id="voting">
               <a href="#" class="btn btn-primary my-2" onclick="App.voteThread(1);">Report Win.</a>
@@ -53,7 +65,7 @@
         </div>
       </section>
     </div>
-    <div class="album py-5 bg-light">
+    <div class="album py-5 bg-light" id="thread_finder" style="display: none;">
       <div class="container-fluid">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
