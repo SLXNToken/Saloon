@@ -67,7 +67,7 @@
         </div>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -78,97 +78,64 @@
     <script src="js/truffle-contract.js"></script>
     <script src="js/app.js"></script>
   </body>
+  <!-- LoaderModal -->
+  <div id="loaderModal" class="bg-theme-light">
+    <h3 class="bg-text-accent">SLXN<small class="text-light">.games</small></h3>
+    <br>
+    <i class="fa fa-spinner fa-spin fa-2x bg-text-accent"></i>
+  </div>
     <!-- Modal -->
-    <div class="modal" id="createMatchModal" tabindex="-1" role="dialog" aria-labelledby="createMatchModal" aria-hidden="true">
+    <div class="modal fade" id="voteOnDisputeModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Create a Session</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Settle a Dispute: <span class="bg-text-accent">Get Rewarded</span></h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
+            <h3 class="text-lead">Fortnite: 1v1 Duos</h3>
+            <hr>
             <form>
-              <div class="form-group">
-                <label for="exampleFormControlInput1">Epic Name</label>
-                <input type="text" id="epicValue" class="form-control" id="epicID" placeholder="EPIC NAME">
-              </div>
-              <div class="form-group">
-                <label for="modeSelect">Game Mode</label>
-                <select class="form-control" id="modeSelect">
-                  <option value="1">1v1</option>
-                  <option value="2">1v1v1v1</option>
-                </select>
-              </div>
+              <label class="text-muted"><b class="text-dark">1</b>. REVIEW SESSION RULES:</label>
               <div class="form-group">
                 <ul class="p-3 rounded alert-secondary" style="list-style: none;">
                   <li>&bull; Compete with another player in Duos.</li>
                   <li>&bull; Most kills wins.</li>
-                  <li>&bull; Player's Epic Name will be displayed once you've joined the game.</li>
                 </ul>
               </div>
+              <hr/>
+              <label class="text-muted"><b class="text-dark">2</b>.SELECT A WINNER:</label>
               <div class="form-group">
-                <label for="exampleFormControlSelect1">Stake</label>
-                <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">SLXN</span>
-                  </div>
-                  <input type="number" id="stakeValue" min="1" class="form-control" value="1" aria-label="Stake Amount" aria-describedby="basic-addon1">
-                </div>              
+                <div class="row goodbye">
+                </div>
               </div>
-            </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" id="confirm" class="btn btn-outline-primary">Create Match</button>
-          </div>
-        </div>
-      </div>
-    </div><!-- Modal -->
-    <div class="modal" id="joinMatchModal" tabindex="-1" role="dialog" aria-labelledby="createMatchModal" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Join Existing Session</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
+              <hr>
               <div class="form-group">
-                <label>Epic Name</label>
-                <input type="text" id="epicValue" class="form-control" placeholder="EPIC NAME">
-              </div>
-              <div class="form-group">
-                <label>Game Mode</label>
-                <select class="form-control" id="modeSelect" disabled="true">
-                  <option value="1">1v1</option>
-                  <option value="2">1v1v1v1</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <ul class="p-3 rounded alert-secondary" style="list-style: none;">
-                  <li>&bull; Compete with another player in Duos.</li>
-                  <li>&bull; Most kills wins.</li>
-                  <li>&bull; Player's Epic Name will be displayed once you've joined the game.</li>
-                </ul>
-              </div>
-              <div class="form-group">
-                <label>Stake</label>
+                <label>Majority Voters are Rewarded</label>
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
                     <span class="input-group-text">SLXN</span>
                   </div>
-                  <input type="number" id="stakeValue" disabled="true" min="1" class="form-control" value="1">
+                  <input type="text" class="form-control" value="~ 0.31" disabled="true">
                 </div>              
               </div>
             </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" id="confirm"  class="btn btn-outline-primary">Join Match</button>
+            <button type="button" disabled="true" id="confirm" class="btn btn-outline-primary">Cast Vote</button>
           </div>
         </div>
       </div>
     </div>
 </html>
+
+                  <div class="col-6 hello d-none">
+                    <label class="playerName">player[560]</label>
+                    <img src="https://i.ytimg.com/vi/on0Ntd-ssxE/hqdefault.jpg" class="img img-fluid">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input checkbox" onclick="App.updateCheckBoxes(this);">
+                      <label class="form-check-label" for="checkbox1">Vote for This Player</label>
+                    </div>
+                  </div>

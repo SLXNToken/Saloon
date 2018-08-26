@@ -1,15 +1,12 @@
 App = {
+
   web3Provider: null,
   contracts: {},
   account: '0x0',
 
   init: function() {
-    $('#createMatchModal').on('shown.bs.modal', function () {
-      $('#myInput').trigger('focus')
-    })
     return App.initWeb3();
   },
-
   initWeb3: function() {
     if (typeof web3 !== 'undefined') {
       // If a web3 instance is already provided by Meta Mask.
@@ -22,7 +19,6 @@ App = {
     }
     return App.initContract();
   },
-
   initContract: function() {
     $.getJSON("Saloon.json", function(Saloon) {
       // Instantiate a new truffle contract from the artifact
@@ -62,15 +58,73 @@ App = {
       App.createMatch(md,stk,epcnm)
     });
   },
-  castMyVote: function(_for){
-    console.log(_for);
+  requestVoteIssue: function(_issueID) {
+    $('.goodbye').empty();
+    $('#voteOnDisputeModal #confirm').attr('disabled', true)
     App.contracts.Saloon.deployed().then(function(instance) {
-      return instance.castMatchVote(_for, { from: App.account });
+      SaloonInstance = instance;
+      return SaloonInstance.issues(_issueID);
     }).then(function(result) {
-      console.log(result)
+      matchID = (result[2].valueOf());
+      return SaloonInstance.matches(matchID);
+    }).then(function(result) {
+      numAccounts = (result[3].valueOf());
+      function redo(i) {
+        SaloonInstance.getAccountByIDinMatch(matchID, i).then(function(acc){
+          SaloonInstance.getEpicByIDinMatch(matchID, acc).then(function(epic){
+            temp = $( ".hello" ).clone()
+            temp.removeClass('hello')
+            temp.removeClass('d-none')
+            temp.addClass('voting')
+            temp.find('.playerName').html(epic)
+            temp.find('.checkbox').attr('acc', i)
+            temp.appendTo( ".goodbye" );
+            if (i < numAccounts) {
+              redo(i+1)
+            }
+          });
+        });
+      };
+      redo(1);
     }).catch(function(err) {
       console.error(err);
     });
+
+
+    $('#voteOnDisputeModal').modal('show');
+
+    $('#voteOnDisputeModal #confirm').on('click', function(){
+      SaloonInstance.issues(_issueID).then(function(result){
+      matchID = (result[2].valueOf());
+        SaloonInstance.getAccountByIDinMatch(matchID, $('#voteOnDisputeModal .voting .checkbox:checked').attr('acc')).then(function(acc){
+              console.log(_issueID, acc);
+              App.sendIssueVote(_issueID, acc);
+      })    
+      })    
+    })
+  },
+  castMyVote: function(_for){
+    App.contracts.Saloon.deployed().then(function(instance) {
+      return instance.castMatchVote(_for, { from: App.account });
+    }).catch(function(err) {
+      console.error(err);
+    });
+  },
+  sendIssueVote: function(_issueID, _for){
+    App.contracts.Saloon.deployed().then(function(instance) {
+      return instance.castIssueVote(_issueID, _forAccount, { from: App.account });
+    }).catch(function(err) {
+      console.error(err);
+    });
+  },
+  updateCheckBoxes: function(e){
+    console.log(e)
+    var boxes = $('#voteOnDisputeModal').find('.voting .checkbox');
+    for (var i = 0; i < boxes.length; i++) {
+        $(boxes[i]).prop('checked', false);
+    }
+    $(e).prop('checked', true);
+    $('#voteOnDisputeModal #confirm').attr('disabled', false)
   },
   createMatch: function(_mode, _stake, _epic) {
     App.contracts.Saloon.deployed().then(function(instance) {
@@ -85,8 +139,7 @@ App = {
   },
   handleFindGame: function() {
 
-        $('#thread_finder').slideDown();
-        App.loadThreads();
+      $('#thread_finder').slideDown();
       },
   handleInGame: function() {
     $('#voting').empty(); // empty voting area
@@ -146,29 +199,6 @@ App = {
       console.error(err);
     });
   },
-  loadThreads: function(matchCount) {
-    console.log('loading threads')
-  },
-  loadDisputes: function(){
-    console.log('loading disputes');
-    // Load disputes
-    App.contracts.Saloon.deployed().then(function(instance) {
-      SaloonInstance = instance;
-      return SaloonInstance.numIssues();
-    }).then(function(numDisputes){
-      numDisputes = numDisputes.valueOf();
-      if (numDisputes > 0){
-        console.log('Disputes Found: ', numDisputes);
-        var outputElement = $("#disputeData");
-        outputElement.empty();
-        for (var i = 1; i <= numDisputes; i++) {
-          SaloonInstance.issues(i).then(function(_issue) {
-            console.log(_issue);
-          });
-        }  
-      }
-    });
-  },
   render: function() {
     var SaloonInstance;
 
@@ -179,8 +209,6 @@ App = {
         $("#accountAddress").html("Your Account: " + account);
       }
     });
-
-    App.loadDisputes();
 
     // Load contract data
     App.contracts.Saloon.deployed().then(function(instance) {
@@ -220,6 +248,7 @@ App = {
       else {
         App.handleFindGame();
       }
+      $('#loaderModal').fadeToggle(1000);
     }).catch(function(error) {
         console.warn(error);
       });
