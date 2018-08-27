@@ -2,4 +2,4 @@
 
 ..
 
-![Screenshot](https://github.com/be9concepts/SLXN/blob/master/public/screenshot.PNG?raw=true);
+![SLXN Icon](https://github.com/be9concepts/SLXN/blob/master/public/icon2.png?raw=true);
