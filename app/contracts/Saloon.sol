@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 contract Saloon {
 
   /*/ Initialize Contract */
-	constructor(address) public {
+	constructor() public {
 		addMode('Fortnite 1v1', 1, 100, 2, (2*3)-1);
 		addMode('Fortnite 1v1v1v1', 1, 100, 4, (4*3)-1);
   }
