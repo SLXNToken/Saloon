@@ -1,32 +1,11 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
-
-contract SLXN is StandardToken {
-  
-  string public name = "Saloon";
-  string public symbol = "SLXN";
-  uint8 public decimals = 0;
-  uint public INITIAL_SUPPLY = 999999;
-  
-  constructor() public {
-    totalSupply_ = INITIAL_SUPPLY;
-    balances[msg.sender] = INITIAL_SUPPLY;
-  }
-}
-
 contract Saloon {
 
   /*/ Initialize Contract */
-	constructor(address _coinAddress) public {
+	constructor(address) public {
 		addMode('Fortnite 1v1', 1, 100, 2, (2*3)-1);
 		addMode('Fortnite 1v1v1v1', 1, 100, 4, (4*3)-1);
-  }
-
-  address public coinContractAddress;
-
-  function setCoinContractAddress (address _to) public {
-    coinContractAddress = _to;
   }
 
 	/* Modes */
