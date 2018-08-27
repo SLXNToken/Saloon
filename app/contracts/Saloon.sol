@@ -1,11 +1,32 @@
 pragma solidity ^0.4.24;
 
+import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+
+contract SLXN is StandardToken {
+  
+  string public name = "Saloon";
+  string public symbol = "SLXN";
+  uint8 public decimals = 0;
+  uint public INITIAL_SUPPLY = 999999;
+  
+  constructor() public {
+    totalSupply_ = INITIAL_SUPPLY;
+    balances[msg.sender] = INITIAL_SUPPLY;
+  }
+}
+
 contract Saloon {
 
   /*/ Initialize Contract */
-	constructor() public {
+	constructor(address _coinAddress) public {
 		addMode('Fortnite 1v1', 1, 100, 2, (2*3)-1);
 		addMode('Fortnite 1v1v1v1', 1, 100, 4, (4*3)-1);
+  }
+
+  address public coinContractAddress;
+
+  function setCoinContractAddress (address _to) public {
+    coinContractAddress = _to;
   }
 
 	/* Modes */
@@ -114,6 +135,8 @@ contract Saloon {
 
 	function placeUserInMatch (uint _id, address _address, string _epic) private {
 
+    // remove stake from user and give it to Saloon
+
 		// Place the user in the Match !merge-!refactor-these
 		userInGame[_address] = true;
 		usersGame[_address] = matchCount;
@@ -141,16 +164,17 @@ contract Saloon {
   mapping(address => bool) public userInGame;
   mapping(address => uint) public usersWins;
 
-  function createMatch (uint _mode, uint _stake, string _epic) public {
-  	// User must have stake
+  function createMatch (uint _mode, uint _stake, string _epic)  public payable {
+
     require(!userInGame[msg.sender]); // user can not already be in a game
   	require(modes[_mode].id != 0, "_mode must exist");
   	require(_stake >= modes[_mode].minStake && _stake <= modes[_mode].maxStake); // stake must be stakeween minStake and maxStake
 
   	addMatch(_mode, _stake, msg.sender, _epic);
   }
+
   function joinMatch (uint _id, string _epic) public{
-  	// User must have stake
+
  	  require(!userInGame[msg.sender]); // user can not already be in a match
  		require(matches[_id].id!=0); // match must exist
   	require(modes[matches[_id].mode].usersNeeded > matches[_id].numAccounts); // must not be full lobby

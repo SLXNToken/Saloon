@@ -4,3 +4,5 @@ build/
 build/contracts
 images/
 fonts/
+*.psd
+token/
